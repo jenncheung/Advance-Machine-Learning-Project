@@ -35,14 +35,14 @@ end
 batchNumber = 0;
 numBatches = ceil(n_obs/batchSize);
 batchTime = zeros(numBatches,1);
-if p.Results.display
-    disp(' ')
-    fprintf('Using GPU: %s\n',mat2str(p.Results.UseGPU))
-    fprintf('Number of images: %d\n',n_obs)
-    fprintf('Number of batches: %d\n',numBatches)
-    fprintf('Number of layers in the Network: %d\n',numel(cnnModel.net.layers))
-    disp('-------------------------------------')
-end
+% if p.Results.display
+%     disp(' ')
+%     fprintf('Using GPU: %s\n',mat2str(p.Results.UseGPU))
+%     fprintf('Number of images: %d\n',n_obs)
+%     fprintf('Number of batches: %d\n',numBatches)
+%     fprintf('Number of layers in the Network: %d\n',numel(cnnModel.net.layers))
+%     disp('-------------------------------------')
+% end
 for ii = 1:batchSize:n_obs
     tic
     idx = ii:min(ii+batchSize-1,n_obs);
@@ -62,12 +62,12 @@ for ii = 1:batchSize:n_obs
 %     end
 end
 
-if p.Results.display
-	fprintf('Avg. execution time/batch:   %2.4f\n',mean(batchTime))
-    disp('-------------------------------------')
-    fprintf('Total execution time:        %2.4f\n',sum(batchTime))
-    disp('-------------------------------------')
-end
+% if p.Results.display
+% 	fprintf('Avg. execution time/batch:   %2.4f\n',mean(batchTime))
+%     disp('-------------------------------------')
+%     fprintf('Total execution time:        %2.4f\n',sum(batchTime))
+%     disp('-------------------------------------')
+% end
 
 if isTapLayer
     classLabel = [];
