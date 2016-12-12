@@ -57,9 +57,9 @@ for ii = 1:batchSize:n_obs
     scores(:,:,:,idx) = squeeze(gather(train_res(end).x));
     batchNumber = batchNumber + 1;
     batchTime(batchNumber) = toc;
-    if p.Results.display
-        fprintf('Batch: %2d/%d. Execution time: %2.4f\n',batchNumber,numBatches,batchTime(batchNumber))
-    end
+%     if p.Results.display
+%         fprintf('Batch: %2d/%d. Execution time: %2.4f\n',batchNumber,numBatches,batchTime(batchNumber))
+%     end
 end
 
 if p.Results.display
