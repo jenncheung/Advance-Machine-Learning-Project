@@ -10,4 +10,3 @@ function [ labels ] = findLabels( imagePath )
         end
     end
 end
-

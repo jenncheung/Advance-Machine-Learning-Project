@@ -6,7 +6,7 @@ function [ cv, err ] = cnnWithLinearSVM( cnnModel, imset, percent )
     % labels from the path of the image to find the accurac
     imageLocation = imset.ImageLocation;
     count = imset(:).Count;
-    imageSize = [244, 244, 3];
+    imageSize = size(read(imset, 1));
 
     % Load and resize training images
     [trainingSet, index] = datasample(imageLocation, percent * count, 'Replace', false);
@@ -14,7 +14,7 @@ function [ cv, err ] = cnnWithLinearSVM( cnnModel, imset, percent )
     trainingSet = imageSet(trainingSet);
 
       for jj = 1:numel(index)
-          images(:,:,:,jj) = imresize(single(read(trainingSet, jj)),imageSize(1:2));
+          images(:,:,:,jj) = read(trainingSet, jj);
       end
 
     trainingLabels = findLabels(imageLocation(index));
@@ -36,7 +36,7 @@ function [ cv, err ] = cnnWithLinearSVM( cnnModel, imset, percent )
         images = zeros([imageSize sum([count/5])],'single');
 
         for jj = 1:testSet.Count
-            images(:,:,:,jj) = imresize(single(read(testSet, jj)),imageSize(1:2));
+            images(:,:,:,jj) = read(testSet, jj);
         end
         [~, predicted] = cnnPredict(cnnModel,images,'UseGPU',false);
         labels = vertcat(labels, predict(svmmdl, predicted));
