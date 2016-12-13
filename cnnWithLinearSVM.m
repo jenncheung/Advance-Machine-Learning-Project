@@ -7,10 +7,11 @@ function [ cv, err ] = cnnWithLinearSVM( cnnModel, imset, percent )
     imageLocation = imset.ImageLocation;
     count = imset(:).Count;
     imageSize = size(read(imset, 1));
+    numTrain = ceil(percent * count);
 
     % Load and resize training images
-    [trainingSet, index] = datasample(imageLocation, percent * count, 'Replace', false);
-    images = zeros([imageSize sum(count*percent)],'single');
+    [trainingSet, index] = datasample(imageLocation, numTrain, 'Replace', false);
+    images = zeros([imageSize numTrain],'single');
     trainingSet = imageSet(trainingSet);
 
       for jj = 1:numel(index)
@@ -19,21 +20,24 @@ function [ cv, err ] = cnnWithLinearSVM( cnnModel, imset, percent )
 
     trainingLabels = findLabels(imageLocation(index));
     imageLocation(index) = [];
-    count = count - percent*count;
+    count = count - numTrain;
     testLabels = findLabels(imageLocation);
 
     [~, cnnFeatures] = cnnPredict(cnnModel,images,'UseGPU',false);
 
     % Train on linear SVM and crossvalidate
-    svmmdl = fitcsvm(cnnFeatures,trainingLabels);
+    % svmmdl = fitcsvm(cnnFeatures,trainingLabels);
+    
+    % For multiclass labels
+    svmmdl = fitcecoc(cnnFeatures,trainingLabels);
     cvmdl = crossval(svmmdl,'KFold',10);
     cv = 1-cvmdl.kfoldLoss;
 
     % Input test set in 5 batches due to size
     labels = [1];
     for n=0:4
-        testSet = imageSet(imageLocation((n*(count/5))+1 : (n+1)*(count/5)));
-        images = zeros([imageSize sum([count/5])],'single');
+        testSet = imageSet(imageLocation(floor((n*count/5))+1 : floor((n+1)*((count/5)))));
+        images = zeros([imageSize testSet.Count],'single');
 
         for jj = 1:testSet.Count
             images(:,:,:,jj) = read(testSet, jj);

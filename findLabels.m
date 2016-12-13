@@ -3,10 +3,12 @@ function [ labels ] = findLabels( imagePath )
 % Cat is 0, dog is 1
     labels = zeros(size(imagePath));
     for n=1:size(imagePath,2)
-        if isempty(strfind(char(imagePath(n)),'cat'))
+        if ~isempty(strfind(char(imagePath(n)),'cat'))
+            labels(n) = 0;
+        elseif ~isempty(strfind(char(imagePath(n)),'dog'))
             labels(n) = 1;
         else
-            labels(n) = 0;
+            labels(n) = -1;
         end
     end
 end
